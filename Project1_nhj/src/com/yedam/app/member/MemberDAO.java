@@ -20,8 +20,10 @@ public class MemberDAO extends DAO {
 	}
 	
 
-	//회원가입
+	//회원가입 
 	public void register(Member member) {
+		Member infromation = null;
+		
 		try {
 			connect();
 			String sql = "INSERT INTO MEMBERS VALUES (?,?)";

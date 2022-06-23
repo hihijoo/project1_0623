@@ -18,14 +18,14 @@ public class Member {
 	
 	@Override
 	public String toString() {
-		String login = "";
+		String info = "";
 		if(memberRole == 0) {
-			login = "관리자 : " + memberId;
+			info = "관리자 : " + memberId;
 		}else  {
-			login = "일반 : " + memberId;
+			info = "일반 : " + memberId;
 			
 		}
-		return login;
+		return info;
 	}
 	
 }
