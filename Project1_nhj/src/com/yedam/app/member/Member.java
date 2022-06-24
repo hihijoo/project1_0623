@@ -14,6 +14,7 @@ public class Member {
 	
 	// 0-관리자, 1-일반
 	private int memberRole;
+	private String memberName;
 	
 	
 	@Override

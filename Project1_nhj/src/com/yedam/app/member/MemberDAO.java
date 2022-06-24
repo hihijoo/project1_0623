@@ -9,43 +9,67 @@ public class MemberDAO extends DAO {
 
 	
 	//싱글톤
-	private static MemberDAO dao = null;
+	private static MemberDAO mDAO = null;
 	private MemberDAO() {}
 	public static MemberDAO getInstance() {
-		if(dao == null) {
-			dao = new MemberDAO();
+		if(mDAO == null) {
+			mDAO = new MemberDAO();
 		}
-		return dao;
+		return mDAO;
 
 	}
 	
-
+	
 	//회원가입 
-	public void register(Member member) {
-		Member infromation = null;
+		public void register(Member member) {	
+			try {
+				connect();
+				String sql = "INSERT INTO MEMBERS (member_id,member_password)VALUES (?,?)";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1,member.getMemberId());
+				pstmt.setString(2, member.getMemberPassword());
+				
+				int result = pstmt.executeUpdate();
+				
+				if (result > 0) {
+					System.out.println("정상적으로 가입되었습니다.");
+				} else {
+					System.out.println("정상적으로 가입되지 않았습니다.");
+				}
 		
-		try {
-			connect();
-			String sql = "INSERT INTO MEMBERS VALUES (?,?)";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1,member.getMemberId());
-			pstmt.setString(2, member.getMemberPassword());
-			
-			int result = pstmt.executeUpdate();
-			
-			if (result > 0) {
-				System.out.println("정상적으로 가입되었습니다.");
-			} else {
-				System.out.println("정상적으로 가입되지 않았습니다.");
+			} catch (SQLException e) {
+				e.printStackTrace();	
+			}finally {
+				disconnect();
 			}
-	
-		} catch (SQLException e) {
-			e.printStackTrace();	
-		}finally {
-			disconnect();
 		}
 		
-	}
+	//아이디 존재여부
+		public Member selectId(String memberId) {
+			Member id = null;
+			try {
+				connect();
+				String sql = "select * from members "+ "where member_id = ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, memberId);
+				
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
+					id = new Member();
+					id.setMemberId(rs.getString("member_id"));
+					id.setMemberPassword(rs.getNString("member_password"));
+					id.setMemberRole(rs.getInt("member_role"));
+				}
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally {
+				disconnect();
+			}	
+			return id;
+			
+		}
 	
 	//로그인
 	public Member selectOne(Member member) {
@@ -65,6 +89,7 @@ public class MemberDAO extends DAO {
 					loginInfo.setMemberId(rs.getString("member_id"));
 					loginInfo.setMemberPassword(rs.getString("member_password"));
 					loginInfo.setMemberRole(rs.getInt("member_role"));
+					loginInfo.setMemberName(rs.getString("member_name"));
 				}else {
 					System.out.println("비밀번호가 일치하지 않습니다.");
 				}
@@ -84,5 +109,33 @@ public class MemberDAO extends DAO {
 	}
 	
 	
+	//MEMBERROLE 조회하기
+//	public Member selectRoll(int memberRole) {
+//		Member role = null;
+//		try{ 
+//			connect();
+//			String sql = "select * from members where member_role = ?";
+//			pstmt = conn.prepareStatement(sql);
+//			pstmt.setInt(1, memberRole);
+//			
+//			rs = pstmt.executeQuery();
+//			
+//			if(rs.next()) {
+//				role = new Member();
+//				role.setMemberId(rs.getString("member_id"));
+//				role.setMemberPassword(rs.getString("member_password"));
+//				role.setMemberName(rs.getString("member_name"));
+//				role.setMemberRole(rs.getInt("member_role"));	
+//			}
+//			
+//		} catch(SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			
+//		disconnect();
+//	}
+//	 return role;
+//	}
+//	
 	
 }

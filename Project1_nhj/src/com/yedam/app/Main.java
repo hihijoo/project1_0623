@@ -1,6 +1,6 @@
 package com.yedam.app;
 
-import com.yedam.app.common.LoginControl;
+import com.yedam.app.member.LoginControl;
 
 public class Main {
 

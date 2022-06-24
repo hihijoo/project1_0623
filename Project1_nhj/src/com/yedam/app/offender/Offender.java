@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 
 	public class Offender {
-		private int prsionNum;
+		private int prisonNum;
 		private String name;
 		private String gender;
 		private String birth;
@@ -16,24 +16,22 @@ import lombok.Setter;
 		private String imprison;
 		private String sentence;
 		private String released;
+		private int freedom;
 		
 		//1-수용중인자 0-석방된자
 		private int offenderRole;
-		
-		
+
 		@Override
 		public String toString() {
-			String crime = "";
-			if(offenderRole == 0) {
-				crime = "석방된자" ;
-			}else  {
-				crime = "수감중인자";
-				
+			String info = "";
+			if(freedom == 1) {
+				info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + 
+						" 범죄:" + crime + "구속여부: 구속중";
+			}else {
+				info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + 
+						" 범죄:" + crime + " 구속여부:석방";
 			}
-			return crime;
+			return info;
 		}
 		
-		
-	
-	
 }

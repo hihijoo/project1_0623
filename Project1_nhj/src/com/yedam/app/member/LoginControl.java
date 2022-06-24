@@ -1,20 +1,23 @@
-package com.yedam.app.common;
+package com.yedam.app.member;
 
 import java.util.Scanner;
 
-import com.yedam.app.member.Member;
-import com.yedam.app.member.MemberDAO;
+import com.yedam.app.management.ManagementAdmin;
+import com.yedam.app.management.ManagementUser;
 
 
 
 public class LoginControl {
 
 	private Scanner sc = new Scanner(System.in);
-	private static Member loginInfo = null;
+	private static Member memberInfo = null;
+	private MemberDAO mDAO = MemberDAO.getInstance();
 	
 	public static Member getLoginInfo() {
-		return loginInfo;
+		return memberInfo;
 	}
+	
+
 	
 	public LoginControl() {
 		while (true) {
@@ -39,9 +42,9 @@ public class LoginControl {
 	}
 	
 	private void menuPrint() {
-		System.out.println("===================");
+		System.out.println("====================");
 		System.out.println("1.회원가입 2.로그인 3.종료");
-		System.out.println("===================");
+		System.out.println("====================");
 	}
 	
 	
@@ -67,42 +70,69 @@ public class LoginControl {
 	
 	//회원가입
 	private void register() {
-		Member information = PersonalInformation();
+		//아이디와 비밀번호 입력
+		Member information = inputregister();
 		
-		//중복 아이디 여부 만들고 싶다....
-		Member member = MemberDAO.register(information.getMemberId());
+		//아이디 중복여부
+		Member member = mDAO.selectId(information.getMemberId());
+		if(member != null) {
+			System.out.println("중복된 아이디가 존재합니다.");
+			return;
+		}
+		
+		//등록되었을 경우 저장
+		mDAO.register(information);
 		
 		
+	}
+	private Member inputregister() {
+		Member info = new Member();
+		System.out.print("아이디 > ");
+		info.setMemberId(sc.nextLine());
+		System.out.print("비밀번호 > ");
+		info.setMemberPassword(sc.nextLine());
+		System.out.println("이름 > ");
+		info.setMemberName(sc.nextLine());
+		return info;
 	}
 	
-	private Member PersonalInformation(){
-		Member personal = new Member();
-		System.out.print("아이디 > ");
-		personal.setMemberId(sc.nextLine());
-		System.out.print("비밀번호 > ");
-		personal.setMemberPassword(sc.nextLine());
-		
-		return personal;
-		
-	}
 	
 	//로그인
 	private void login() {
 		//아이디와 비밀번호 입력
-		Member inputInfo = inputMember();
+		Member inputInfo = inputlogin();
 		
 		//로그인 시도
-		loginInfo = MemberDAO.getInstance().selectOne(inputInfo);
+		memberInfo = MemberDAO.getInstance().selectOne(inputInfo);
 		
 		//실패할 경우 그대로 메소드 종료
-		if(loginInfo == null)
+		if(memberInfo == null)
 			return;
 		
+		
 		//성공할 결우 프로그램 실행
-		new Management().run();
-	}
+		
+		Login loginMember = new Login();
+		
+		loginMember.setMemberId(inputInfo.getMemberId());
+		loginMember.setMemberPassword(inputInfo.getMemberPassword());
+		if (inputInfo.getMemberId().equals("admin")) {
+			loginMember.setMemberRole(0);
+			new ManagementAdmin().run();
+		} else {
+			loginMember.setMemberRole(1);
+			new ManagementUser().run();
+		}
 	
-	private Member inputMember() {
+	
+		
+
+	
+	}
+
+	
+
+	private Member inputlogin() {
 		Member info = new Member();
 		System.out.print("아이디 > ");
 		info.setMemberId(sc.nextLine());

@@ -50,7 +50,7 @@ public class OffenderDAO extends DAO {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
 			String sql = "UPDATE OFFENDERS SET SENTENCE = ? WHERE PRISON_NUM = ?";
 			pstmt.setString(1, offender.getSentence());
-			pstmt.setInt(2, offender.getPrsionNum());
+			pstmt.setInt(2, offender.getPrisonNum());
 			
 			int result = pstmt.executeUpdate();
 			if (result>0) {
@@ -74,7 +74,7 @@ public class OffenderDAO extends DAO {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
 			String sql = "UPDATE OFFENDERS SET Location = ? WHERE PRISON_NUM = ?";
 			pstmt.setString(1, offender.getLocation());
-			pstmt.setInt(2, offender.getPrsionNum());
+			pstmt.setInt(2, offender.getPrisonNum());
 			
 			int result = pstmt.executeUpdate();
 			if (result>0) {
@@ -90,6 +90,7 @@ public class OffenderDAO extends DAO {
 		
 	}
 	 
+	/*
 	//삭제 -죄수번호
 	public void delete(int prisonNum) {
 		
@@ -114,7 +115,7 @@ public class OffenderDAO extends DAO {
 		}
 		
 	}
-	
+	*/
 	
 	// 단건조회 - 죄수번호
 	public Offender selectOne (int prisonNum) {
@@ -130,7 +131,7 @@ public class OffenderDAO extends DAO {
 			while(rs.next()) {
 				off = new Offender();
 				
-				off.setPrsionNum(rs.getInt("prison_num"));
+				off.setPrisonNum(rs.getInt("prison_num"));
 				off.setName(rs.getString("name"));
 				off.setGender(rs.getString("gender"));
 				off.setBirth(rs.getString("birth"));
@@ -150,18 +151,43 @@ public class OffenderDAO extends DAO {
 		
 	}
 	
-	// 전체조회 - 투옥중인사람
+	// 단건조회 - 투옥중인사람
 	
 	
 	
 	
 	
-	// 전체조회 - 출소한 사람
+	// 단건조회 - 출소한사람
 	
 	
 	//전체조회 - 지역
-	public List<Offender> selectAll() {
+	public List<Offender> selectAll(String location) {
 		List<Offender> list = new ArrayList<>();
+	
+		try {
+			connect();
+			String sql = "select * "+ "from v_crime "+ "where location =" + "'"+location+"'";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				Offender offender = new Offender();
+				offender.setPrisonNum(rs.getInt("prison_num"));
+				offender.setName(rs.getString("name"));
+				offender.setGender(rs.getString("gender"));
+				offender.setBirth(rs.getNString("birth"));
+				offender.setCrime(rs.getString("crime"));
+				offender.setReleased(rs.getString("released"));	
+			
+			list.add(offender);
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
 		
+		return list;
 	}
 }
