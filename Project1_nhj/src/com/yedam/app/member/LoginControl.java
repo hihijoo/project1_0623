@@ -91,7 +91,7 @@ public class LoginControl {
 		info.setMemberId(sc.nextLine());
 		System.out.print("비밀번호 > ");
 		info.setMemberPassword(sc.nextLine());
-		System.out.println("이름 > ");
+		System.out.print("이름 > ");
 		info.setMemberName(sc.nextLine());
 		return info;
 	}

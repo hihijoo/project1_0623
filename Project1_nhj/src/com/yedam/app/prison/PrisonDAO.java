@@ -1,6 +1,8 @@
 package com.yedam.app.prison;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.yedam.app.common.DAO;
 import com.yedam.app.offender.Offender;
@@ -21,14 +23,23 @@ public class PrisonDAO extends DAO {
 	public void insert (Prison prison) {
 		try{
 			connect();
-			String sql = "INSERT INTO PRISON VALUES (?,?,?,?)";
+			String sql = "INSERT INTO PRISON (prison_name, prison_location, prison_accommodate, prison_occupy) VALUES (?,?,?,?)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, prison.getPrisonName());
 			pstmt.setString(2, prison.getPrisonLocation());
 			//현재 교도소 최대 수용인원
-			pstmt.setInt(3, prison.getPrisonOccupy()); 
+			pstmt.setInt(3, prison.getPrisonAccommodate()); //30명 
 			//현재 교도소 수용가능인원(최대 수용인원 - 수용중인 인원)
-			pstmt.setInt(4, prison.getPrisonOccupy()-selectInfo(prison.getPrisonLocation()));
+			pstmt.setInt(4, prison.getPrisonAccommodate()); //30명
+			//pstmt.setInt(4, prison.getPrisonAccommodate()-selectInfo(prison.getPrisonLocation()));
+			
+			int result = pstmt.executeUpdate();
+			
+			if(result > 0) {
+				System.out.println("정상적으로 등록되었습니다.");
+			} else {
+				System.out.println("정상적으로 등록되지 않았습니다.");
+			}
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -38,12 +49,98 @@ public class PrisonDAO extends DAO {
 		}
 	}
 	
+	//전체조회 
+	public List<Prison> selectAll(){
+		List<Prison> list = new ArrayList<>();
+		try {
+			connect();
+			String sql = "select * from prison order by prison_location";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				Prison prison = new Prison();
+				prison.setPrisonName(rs.getString("prison_name"));
+				prison.setPrisonLocation(rs.getString("prison_location"));
+				prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
+				prison.setPrisonOccupy(rs.getInt("prison_occupy"));
+				
+				list.add(prison);
+				
+			}
+		
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		
+		return list;
+		
+	}
+	
+	
+	
+	//단건 조회 - 교도소 지역
+	public Prison selectLocation(String prisonLocation) {
+		Prison prison = null;
+		try {
+			connect();
+			String sql = "SELECT * FROM PRISON WHERE PRISON_LOCATION = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,prisonLocation);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				prison = new Prison();
+				prison.setPrisonName(rs.getString("prison_name"));
+				prison.setPrisonLocation(rs.getString("prison_location"));
+				prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
+				prison.setPrisonOccupy(rs.getInt("prison_occupy"));
+	
+			}
+		
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		return prison;
+	}
+	
+	//단건 조회 - 교도소 이름
+		public Prison selectName(String prisonName) {
+			Prison prison = null;
+			try {
+				connect();
+				String sql = "SELECT * FROM PRISON WHERE PRISON_NAME = ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1,prisonName);
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()) {
+					prison = new Prison();
+					prison.setPrisonName(rs.getString("prison_name"));
+					prison.setPrisonLocation(rs.getString("prison_location"));
+					prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
+					prison.setPrisonOccupy(rs.getInt("prison_occupy"));
+		
+				}
+			
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally {
+				disconnect();
+			}
+			return prison;
+		}
+	
 	//수용 중인 인원	
 	public int selectInfo(String location) {
 		int amount = 0;
 		try {
 			connect();
-			String sql = "SELECT COUNT(*) "+ "FROM OFFENDERS " + "WHERE LOCAION = " + location;
+			String sql = "SELECT COUNT(*) as count "+ "FROM offenders " + "WHERE LOCATION = " + "'"+location+"'";
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
@@ -63,21 +160,48 @@ public class PrisonDAO extends DAO {
 	
 	
 	//수정 - 수용인원 조절
-	public void updateOccupy(Prison prison) {
+	public void updateAccommodate(Prison prison) {
 		
 		try {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
-			String sql = "UPDATE PRISON SET Prison_Occupy = ? WHERE PRISON_NAME = ?";
-			pstmt.setInt(1, prison.getPrisonOccupy());
-			pstmt.setString(2, prison.getPrisonName());
+			String sql = "UPDATE PRISON SET Prison_accommodate = ?, prison_occupy = ? WHERE PRISON_location = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, prison.getPrisonAccommodate()); //15명 최대 수용가능인원
+			pstmt.setInt(2, prison.getPrisonOccupy());
+			pstmt.setString(3, prison.getPrisonLocation());
 			
 			int result = pstmt.executeUpdate();
 			
 			if (result>0) {
-				System.out.println("인원이 수정되었습니다.");
+				System.out.println("정상적으로 인원이 수정되었습니다.");
 			}else {
-				System.out.println("인원이 정상적으로 수정되지 않았습니다.");
+			System.out.println("정상적으로 인원이 수정되지 않았습니다.");
 			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		
+	}
+	
+	//수정 - 교도소 이름
+	public void updateName(Prison prison) {
+		
+		try {
+			connect();				//문장 끝날때 마다 공백 신경쓰기
+			String sql = "UPDATE PRISON SET Prison_name = ? where prison_location = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,prison.getPrisonName());
+			pstmt.setString(2,prison.getPrisonLocation());
+			
+			int result = pstmt.executeUpdate();
+			
+			if (result>0) {
+				System.out.println("정상적으로 이름이 수정되었습니다.");
+			}else {
+				System.out.println("정상적으로 이름이 수정되지 않았습니다.");
+				}
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {

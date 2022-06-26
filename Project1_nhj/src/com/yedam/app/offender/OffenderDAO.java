@@ -3,8 +3,13 @@ package com.yedam.app.offender;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import com.yedam.app.common.DAO;
+import com.yedam.app.management.Management;
+import com.yedam.app.prison.Prison;
+
 
 public class OffenderDAO extends DAO {
 
@@ -21,35 +26,44 @@ public class OffenderDAO extends DAO {
 	
 	// 등록
 	public void insert(Offender offender) {
+		
 		try {
 			connect();
-			String sql = "INSERT INTO OFFENDERS VALUES (OFFENDERS_SEQ.NEXTVAL,?,?,?,?,?,?,?,?)";
+		
+			String sql = "INSERT INTO OFFENDERS VALUES (OFFENDERS_SEQ.NEXTVAL,?,?,?,?,?,?,?,add_months(?,?),default)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, offender.getName());
 			pstmt.setString(2, offender.getGender());
-			pstmt.setString(3, offender.getBirth());
+			pstmt.setDate(3, offender.getBirth());
 			pstmt.setString(4, offender.getLocation());
 			pstmt.setString(5, offender.getCrime());
-			pstmt.setString(6, offender.getImprison());
-			pstmt.setString(7, offender.getSentence());
-			pstmt.setString(8, offender.getReleased()); //석방일을 투옥일에서 형량 더한값으로 나오게 하는 방법
+			pstmt.setDate(6, offender.getImprison());//투옥일
+			pstmt.setLong(7, offender.getSentence());//형량
+			pstmt.setDate(8, offender.getImprison());//투옥일
+			pstmt.setLong(9, offender.getSentence()); //석방일을 투옥일에서 형량 더한값으로 나오게 하는 방법
+		
+			int result = pstmt.executeUpdate();
 			
-			
+			if(result >0) {
+				//여기에 석방일 값을 변경하는 로직을 만들고 싶음
+				System.out.println("정상적으로 등록되었습니다.");
+			} else {
+				System.out.println("정상적으로 등록되지 않았습니다.");
+			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			disconnect();
 		}
 	}
-	
-	
+
 	// 수정 - 형량
 	public void updateSentence(Offender offender) {
 		
 		try {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
 			String sql = "UPDATE OFFENDERS SET SENTENCE = ? WHERE PRISON_NUM = ?";
-			pstmt.setString(1, offender.getSentence());
+			pstmt.setLong(1, offender.getSentence());
 			pstmt.setInt(2, offender.getPrisonNum());
 			
 			int result = pstmt.executeUpdate();
@@ -90,7 +104,9 @@ public class OffenderDAO extends DAO {
 		
 	}
 	 
-	/*
+	
+
+	
 	//삭제 -죄수번호
 	public void delete(int prisonNum) {
 		
@@ -115,7 +131,7 @@ public class OffenderDAO extends DAO {
 		}
 		
 	}
-	*/
+	
 	
 	// 단건조회 - 죄수번호
 	public Offender selectOne (int prisonNum) {
@@ -134,12 +150,12 @@ public class OffenderDAO extends DAO {
 				off.setPrisonNum(rs.getInt("prison_num"));
 				off.setName(rs.getString("name"));
 				off.setGender(rs.getString("gender"));
-				off.setBirth(rs.getString("birth"));
+				off.setBirth(rs.getDate("birth"));
 				off.setCrime(rs.getString("location"));
 				off.setCrime(rs.getString("crime"));
-				off.setImprison(rs.getString("imprison"));
-				off.setSentence(rs.getString("sentence"));
-				off.setReleased(rs.getString("released"));
+				off.setImprison(rs.getDate("imprison"));
+				off.setSentence(rs.getLong("sentence"));
+				off.setReleased(rs.getDate("released"));
 			}
 			
 		} catch (SQLException e) {
@@ -150,19 +166,57 @@ public class OffenderDAO extends DAO {
 		return off;
 		
 	}
+	//조회 - 이름 -> 만약 동명이인이 있을 경우 죄수번호 확인 위해서
+	public List<Management> selectName(String name) {
+		List<Management> list = new ArrayList<>();
+		
+		try {
+			connect();
+			String sql = "select from v_offenderInfo where name =" + "'"+name+"'";
+			stmt = conn.createStatement();
+			rs = pstmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				Management info = new Management();
+				info.setPrisonName(rs.getString("prison_name"));
+				info.setPrisonLocation(rs.getString("prison_location"));
+				info.setPrisonNum(rs.getInt("prison_num"));
+				info.setName(rs.getString("name"));
+				info.setGender(rs.getString("gender"));
+				info.setBirth(rs.getDate("birth"));
+				info.setCrime(rs.getString("crime"));
+				info.setImprison(rs.getDate("imprison"));
+				info.setSentence(rs.getLong("sentence"));
+				info.setReleased(rs.getDate("released"));
+				info.setFreedom(rs.getString("freedom"));
+				
+				list.add(info);
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		return list;
+	}
 	
-	// 단건조회 - 투옥중인사람
+	
+	
+	// 전체조회 - 투옥중인사람
 	
 	
 	
 	
 	
-	// 단건조회 - 출소한사람
+	// 전체조회 - 출소한사람
 	
 	
-	//전체조회 - 지역
-	public List<Offender> selectAll(String location) {
-		List<Offender> list = new ArrayList<>();
+	
+	
+	//전체조회 - 지역별 죄수들(유저들이 보는것)
+	public List<Management> selectLocation(String location) {
+		List<Management> list = new ArrayList<>();
 	
 		try {
 			connect();
@@ -171,15 +225,18 @@ public class OffenderDAO extends DAO {
 			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
-				Offender offender = new Offender();
-				offender.setPrisonNum(rs.getInt("prison_num"));
-				offender.setName(rs.getString("name"));
-				offender.setGender(rs.getString("gender"));
-				offender.setBirth(rs.getNString("birth"));
-				offender.setCrime(rs.getString("crime"));
-				offender.setReleased(rs.getString("released"));	
+				Management info = new Management();
+				
+				info.setPrisonNum(rs.getInt("prison_num"));
+				info.setName(rs.getString("name"));
+				info.setGender(rs.getString("gender"));
+				info.setBirth(rs.getDate("birth"));
+				info.setCrime(rs.getString("crime"));
+				info.setPrisonName(rs.getString("prison_name"));
+				info.setPrisonLocation(rs.getString("Prison_location"));
+				info.setFreedom(rs.getString("freedom"));	
 			
-			list.add(offender);
+			list.add(info);
 			}
 			
 		}catch(SQLException e) {
@@ -188,6 +245,44 @@ public class OffenderDAO extends DAO {
 			disconnect();
 		}
 		
+		return list;
+	}
+	
+	
+	//전체 조회 
+	public List<Management> selectAll(){
+		List<Management> list = new ArrayList<>();
+		
+		try {
+			connect();
+			String sql ="SELECT * FROM v_offenderInfo";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while (rs.next()){
+				Management info = new Management();
+				info.setPrisonName(rs.getString("prison_name"));
+				info.setPrisonLocation(rs.getString("Prison_location"));
+				info.setPrisonNum(rs.getInt("prison_num"));
+				info.setName(rs.getString("name"));
+				info.setGender(rs.getString("gender"));
+				info.setBirth(rs.getDate("birth"));
+				info.setCrime(rs.getString("crime"));
+				info.setImprison(rs.getDate("imprison"));
+				info.setSentence(rs.getLong("sentence"));
+				info.setReleased(rs.getDate("released"));
+				info.setFreedom(rs.getString("freedom"));
+				
+				list.add(info);
+			}
+			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+
 		return list;
 	}
 }

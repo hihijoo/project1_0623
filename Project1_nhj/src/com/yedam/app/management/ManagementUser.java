@@ -17,7 +17,7 @@ public class ManagementUser {
 	protected Scanner sc = new Scanner(System.in);
 	protected MemberDAO mDAO = MemberDAO.getInstance();
 	protected OffenderDAO oDAO = OffenderDAO.getInstance();
-
+		
 	
 	//생성자
 	public void run() {
@@ -76,15 +76,15 @@ public class ManagementUser {
 		//조회하고자 하는 지역을 입력
 		String location = inputLocation();
 		 
-		List<Offender> offenders = oDAO.selectAll(location);
+		List<Management> list = oDAO.selectLocation(location);
 		 
-		if(offenders.size() == 0) {
+		if(list.size() == 0) {
 			System.out.println("해당지역에 범죄자가 없습니다.");
 			return;
 		}
 		
-		for(Offender offender : offenders) {
-			System.out.println(offender);
+		for(Management allView : list) {
+			System.out.println(allView.allView());
 		}
 		
 	}

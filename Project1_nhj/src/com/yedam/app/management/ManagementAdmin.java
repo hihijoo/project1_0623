@@ -25,27 +25,18 @@ public class ManagementAdmin {
 				int menuNo = menuSelect();
 				
 				if(menuNo ==1) {
-					//1.범죄자 조회
-					searchOffender();
+					//1.범죄자 관리
+					new ManagementOffender().run();
 				
 				}else if (menuNo == 2){
-					//2. 범죄자 등록
+					//2. 교도소 관리
+					new ManagementPrison().run();
 					
-				}else if (menuNo == 3){
-					//3. 범죄자 수정 - 형량
-				}else if (menuNo == 4){
-					//4. 범죄자 수정 - 지역
-				}else if (menuNo == 5){
-					//5. 범죄자 전체 조회
-				}else if (menuNo == 6){
-					//6. 단건조회(투옥중인 사람)
-				}else if (menuNo == 7){
-					//6. 단건조회(출소한 사람)
 				}else if(menuNo ==9) {
-
 					//프로그램 종료
 					exit();
 					break;
+					
 				}else {
 					//입력오류
 					showInputError();
@@ -55,11 +46,11 @@ public class ManagementAdmin {
 		
 		//메소드
 		
-		//권한에 따른 메뉴
+		//메뉴
 		protected void menuPrint() {
-			System.out.println("==================");
-			System.out.println("1.범죄자 조회 2. 바보 9.로그아웃");
-			System.out.println("==================");
+			System.out.println("===========================");
+			System.out.println("1.범죄자 관리 2.교도소 관리 9.로그아웃");
+			System.out.println("===========================");
 			
 		}
 			
@@ -75,13 +66,13 @@ public class ManagementAdmin {
 		}
 		
 		protected void exit() {
-			System.out.println("프로그램을 종료합니다.");
+			System.out.println("로그아웃 완료");
 		}
 
 		protected void showInputError () {
 			System.out.println("메뉴에서 입력해주시기 바랍니다.");
 		}
-		
-
+	
+	
 	
 }
