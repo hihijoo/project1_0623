@@ -34,10 +34,10 @@ import lombok.Setter;
 			String info = "";
 			if(freedom == "수감중") {
 				info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + 
-						" 죄목:" + crime + " 수감일:"+imprison+" 형량:"+year+"년 "+month+"개월"+" 석방일:"+released+" 구속여부:"+freedom;
+						" 죄목:" + crime + " \n수감일:"+imprison+" 형량:"+year+"년 "+month+"개월"+" 석방일:"+released+" 구속여부:"+freedom;
 			}else {
 				info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + 
-						" 죄목:" + crime + " 수감일:"+imprison+" 형량:"+year+"년 "+month+"개월"+" 석방일:"+released+" 구속여부:"+freedom;
+						" 죄목:" + crime + " \n수감일:"+imprison+" 형량:"+year+"년 "+month+"개월"+" 석방일:"+released+" 구속여부:"+freedom;
 			}
 			return info;
 		}

@@ -63,6 +63,9 @@ public class PrisonDAO extends DAO {
 				prison.setPrisonName(rs.getString("prison_name"));
 				prison.setPrisonLocation(rs.getString("prison_location"));
 				prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
+				//int count = rs.getInt("prison_accommodate");
+				//System.out.println(count);
+				
 				prison.setPrisonOccupy(rs.getInt("prison_occupy"));
 				
 				list.add(prison);
@@ -95,8 +98,9 @@ public class PrisonDAO extends DAO {
 				prison = new Prison();
 				prison.setPrisonName(rs.getString("prison_name"));
 				prison.setPrisonLocation(rs.getString("prison_location"));
-				prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
+				prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));	
 				prison.setPrisonOccupy(rs.getInt("prison_occupy"));
+			
 	
 			}
 		
@@ -124,7 +128,6 @@ public class PrisonDAO extends DAO {
 					prison.setPrisonLocation(rs.getString("prison_location"));
 					prison.setPrisonAccommodate(rs.getInt("prison_accommodate"));
 					prison.setPrisonOccupy(rs.getInt("prison_occupy"));
-		
 				}
 			
 			}catch(SQLException e) {
@@ -159,8 +162,8 @@ public class PrisonDAO extends DAO {
 	}
 	
 	
-	//수정 - 수용인원 조절
-	public void updateAccommodate(Prison prison) {
+	//수정 - 최대수용인원 조절
+	public void updatePrison(Prison prison) {
 		
 		try {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
@@ -173,7 +176,55 @@ public class PrisonDAO extends DAO {
 			int result = pstmt.executeUpdate();
 			
 			if (result>0) {
-				System.out.println("정상적으로 인원이 수정되었습니다.");
+				
+			}else {
+			System.out.println("정상적으로 인원이 수정되지 않았습니다.");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		
+	}
+	//수정 - 최대수용인원 조절
+		public void updateAccommodate(Prison prison) {
+			
+			try {
+				connect();				//문장 끝날때 마다 공백 신경쓰기
+				String sql = "UPDATE PRISON SET Prison_accommodate = ? WHERE PRISON_location = ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, prison.getPrisonAccommodate()); //15명 최대 수용가능인원
+				pstmt.setString(2, prison.getPrisonLocation());
+				
+				int result = pstmt.executeUpdate();
+				
+				if (result>0) {
+					
+				}else {
+				System.out.println("정상적으로 인원이 수정되지 않았습니다.");
+				}
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally {
+				disconnect();
+			}
+			
+		}
+	//수정 - 수용중인 조절
+	public void updateOccupy(Prison prison) {
+		
+		try {
+			connect();				//문장 끝날때 마다 공백 신경쓰기
+			String sql = "UPDATE PRISON SET Prison_occupy = ? WHERE PRISON_location = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, prison.getPrisonOccupy()); //15명 최대 수용가능인원
+			pstmt.setString(2, prison.getPrisonLocation());
+			
+			int result = pstmt.executeUpdate();
+			
+			if (result>0) {
+				
 			}else {
 			System.out.println("정상적으로 인원이 수정되지 않았습니다.");
 			}

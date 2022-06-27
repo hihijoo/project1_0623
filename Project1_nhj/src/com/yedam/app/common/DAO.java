@@ -23,6 +23,7 @@ public class DAO {
 		protected Statement stmt;
 		protected PreparedStatement pstmt;
 		protected ResultSet rs;
+		protected ResultSet sr;
 		
 		//한번만 dbconfig를 실행시키고자 한다면 빼내야함
 		public DAO() {

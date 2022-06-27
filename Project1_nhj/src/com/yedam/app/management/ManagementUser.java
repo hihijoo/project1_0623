@@ -17,7 +17,7 @@ public class ManagementUser {
 	protected Scanner sc = new Scanner(System.in);
 	protected MemberDAO mDAO = MemberDAO.getInstance();
 	protected OffenderDAO oDAO = OffenderDAO.getInstance();
-		
+	protected ManagementDAO gDAO = ManagementDAO.getInstance();		
 	
 	//생성자
 	public void run() {
@@ -71,29 +71,39 @@ public class ManagementUser {
 		System.out.println("메뉴에서 입력해주시기 바랍니다.");
 	}
 	
-
+	//범죄자 조회 - 지역별로 조회가능
 	protected void searchOffender() {
 		//조회하고자 하는 지역을 입력
 		String location = inputLocation();
 		 
-		List<Management> list = oDAO.selectLocation(location);
+		List<Management> list = gDAO.selectLocation(location);
 		 
 		if(list.size() == 0) {
 			System.out.println("해당지역에 범죄자가 없습니다.");
 			return;
 		}
 		
+		//유저가 보는 전체화면
 		for(Management allView : list) {
 			System.out.println(allView.allView());
 		}
 		
 	}
+
 	
-	protected String inputLocation(){
-		System.out.println("검색 가능한 지역 - 서울/인천/부산/대구/광주/강릉/제주/대전/울산/천안");
-		System.out.print("지역을 입력하세요> ");
+	// 지역 입력
+	private String inputLocation() {
+		List<Management> list = gDAO.distinctLocation();
+		if(list.size()==0) {
+			System.out.println("결과없는데");
+			return "";
+		}
+		System.out.print("검색 가능한 지역 - " + list.get(0).getPrisonLocation());
+		for (int i = 1; i < list.size(); i++) {
+			System.out.print("/" + list.get(i).getPrisonLocation());
+		}
+		System.out.print("\n지역 > ");
 		return sc.nextLine();
-		
 	}
 	
 }

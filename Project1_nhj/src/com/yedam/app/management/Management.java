@@ -32,11 +32,17 @@ public class Management {
 		
 		if(year == 0){
 			//0개월일 경우
-			info =prisonName +" 지역:"+prisonLocation+ " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth 
+			info ="죄수번호:" + prisonNum + " 이름:" + name +" 성별:" + gender + " 생년월일:" + birth + " "+ prisonName +" 지역:"+prisonLocation
 				+ " 죄목:" + crime +" 수감일:" +imprison + " 형량:"+month+"개월"+ " 석방일:" +released + " " +freedom;
+			System.out.println();
+		} else if (month ==0){
+			info = "죄수번호:" + prisonNum + " 이름:" + name +" 성별:" + gender + " 생년월일:" + birth +" "+ prisonName +" 지역:"+prisonLocation 
+					+ " 죄목:" + crime +" 수감일:" +imprison + " 형량:"+year+"년"+ " 석방일:" +released + " " +freedom ;
+			System.out.println();
 		}else {
-			info =prisonName +" 지역:"+prisonLocation+ " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth 
-					+ " 죄목:" + crime +" 수감일:" +imprison + " 형량:"+year+"년 "+month+"개월"+ " 석방일:" +released + " " +freedom;
+			info ="죄수번호:" + prisonNum + " 이름:" + name +" 성별:" + gender + " 생년월일:" + birth +" "+ prisonName +" 지역:"+prisonLocation 
+					+ "죄목:" + crime +" 수감일:" +imprison + " 형량:"+year+"년 " +month+"개월"+ " 석방일:" +released + " " +freedom ;
+			System.out.println();
 		}
 		
 		return info;
@@ -44,8 +50,8 @@ public class Management {
 	
 	public String allView (){
 	return prisonName + " 지역:"+prisonLocation+ " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth 
-			+ " 죄목:" + crime  +" "+freedom;
-	
+			+ "죄목:" + crime  +" "+freedom;
+		
 	}
 	
 }

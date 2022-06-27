@@ -58,20 +58,19 @@ public class OffenderDAO extends DAO {
 	}
 
 	// 수정 - 형량
-	public void updateSentence(Offender offender) {
+	public void updateSentence(Management management) {
 		
 		try {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
-			String sql = "UPDATE OFFENDERS SET SENTENCE = ? WHERE PRISON_NUM = ?";
-			pstmt.setLong(1, offender.getSentence());
-			pstmt.setInt(2, offender.getPrisonNum());
+			String sql = "UPDATE OFFENDERS SET SENTENCE = ?, RELEASED = ADD_MONTHS(?,?) WHERE prison_num = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, management.getSentence());
+			pstmt.setDate(2, management.getImprison());
+			pstmt.setLong(3, management.getSentence());
+			pstmt.setInt(4, management.getPrisonNum());
 			
-			int result = pstmt.executeUpdate();
-			if (result>0) {
-				System.out.println("형량이 수정되었습니다.");
-			}else {
-				System.out.println("형량이 정상적으로 수정되지 않았습니다.");
-			}
+			pstmt.executeUpdate();
+			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -82,20 +81,17 @@ public class OffenderDAO extends DAO {
 	
 	
 	// 수정 - 주소
-	public void updateLocation(Offender offender) {
+	public void updateLocation(Management management) {
 		
 		try {
 			connect();				//문장 끝날때 마다 공백 신경쓰기
 			String sql = "UPDATE OFFENDERS SET Location = ? WHERE PRISON_NUM = ?";
-			pstmt.setString(1, offender.getLocation());
-			pstmt.setInt(2, offender.getPrisonNum());
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, management.getPrisonLocation());
+			pstmt.setInt(2, management.getPrisonNum());
 			
-			int result = pstmt.executeUpdate();
-			if (result>0) {
-				System.out.println("주소가 수정되었습니다.");
-			}else {
-				System.out.println("주소가 정상적으로 수정되지 않았습니다.");
-			}
+			pstmt.executeUpdate();
+			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -133,8 +129,9 @@ public class OffenderDAO extends DAO {
 	}
 	
 	
+	
 	// 단건조회 - 죄수번호
-	public Offender selectOne (int prisonNum) {
+	/*public Offender selectOne (int prisonNum) {
 		Offender off = null;
 		
 		try {
@@ -165,124 +162,6 @@ public class OffenderDAO extends DAO {
 		}
 		return off;
 		
-	}
-	//조회 - 이름 -> 만약 동명이인이 있을 경우 죄수번호 확인 위해서
-	public List<Management> selectName(String name) {
-		List<Management> list = new ArrayList<>();
-		
-		try {
-			connect();
-			String sql = "select from v_offenderInfo where name =" + "'"+name+"'";
-			stmt = conn.createStatement();
-			rs = pstmt.executeQuery(sql);
-			
-			while (rs.next()) {
-				Management info = new Management();
-				info.setPrisonName(rs.getString("prison_name"));
-				info.setPrisonLocation(rs.getString("prison_location"));
-				info.setPrisonNum(rs.getInt("prison_num"));
-				info.setName(rs.getString("name"));
-				info.setGender(rs.getString("gender"));
-				info.setBirth(rs.getDate("birth"));
-				info.setCrime(rs.getString("crime"));
-				info.setImprison(rs.getDate("imprison"));
-				info.setSentence(rs.getLong("sentence"));
-				info.setReleased(rs.getDate("released"));
-				info.setFreedom(rs.getString("freedom"));
-				
-				list.add(info);
-			}
-			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			disconnect();
-		}
-		return list;
-	}
-	
-	
-	
-	// 전체조회 - 투옥중인사람
-	
-	
-	
-	
-	
-	// 전체조회 - 출소한사람
-	
-	
-	
-	
-	//전체조회 - 지역별 죄수들(유저들이 보는것)
-	public List<Management> selectLocation(String location) {
-		List<Management> list = new ArrayList<>();
-	
-		try {
-			connect();
-			String sql = "select * "+ "from v_crime "+ "where location =" + "'"+location+"'";
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			
-			while(rs.next()) {
-				Management info = new Management();
-				
-				info.setPrisonNum(rs.getInt("prison_num"));
-				info.setName(rs.getString("name"));
-				info.setGender(rs.getString("gender"));
-				info.setBirth(rs.getDate("birth"));
-				info.setCrime(rs.getString("crime"));
-				info.setPrisonName(rs.getString("prison_name"));
-				info.setPrisonLocation(rs.getString("Prison_location"));
-				info.setFreedom(rs.getString("freedom"));	
-			
-			list.add(info);
-			}
-			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			disconnect();
-		}
-		
-		return list;
-	}
-	
-	
-	//전체 조회 
-	public List<Management> selectAll(){
-		List<Management> list = new ArrayList<>();
-		
-		try {
-			connect();
-			String sql ="SELECT * FROM v_offenderInfo";
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			
-			while (rs.next()){
-				Management info = new Management();
-				info.setPrisonName(rs.getString("prison_name"));
-				info.setPrisonLocation(rs.getString("Prison_location"));
-				info.setPrisonNum(rs.getInt("prison_num"));
-				info.setName(rs.getString("name"));
-				info.setGender(rs.getString("gender"));
-				info.setBirth(rs.getDate("birth"));
-				info.setCrime(rs.getString("crime"));
-				info.setImprison(rs.getDate("imprison"));
-				info.setSentence(rs.getLong("sentence"));
-				info.setReleased(rs.getDate("released"));
-				info.setFreedom(rs.getString("freedom"));
-				
-				list.add(info);
-			}
-			
-			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			disconnect();
-		}
+	}*/
 
-		return list;
-	}
 }
