@@ -44,12 +44,12 @@ public class OffenderDAO extends DAO {
 		
 			int result = pstmt.executeUpdate();
 			
-			if(result >0) {
-				//여기에 석방일 값을 변경하는 로직을 만들고 싶음
+			if(result !=0) {
 				System.out.println("정상적으로 등록되었습니다.");
 			} else {
 				System.out.println("정상적으로 등록되지 않았습니다.");
 			}
+			
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally {

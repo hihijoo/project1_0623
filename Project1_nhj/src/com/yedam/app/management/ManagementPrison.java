@@ -136,10 +136,6 @@ public class ManagementPrison {
 			
 			//수용중인인원
 			System.out.println(prison);
-		
-			
-			
-			
 		}
 		
 		//지역 검색
@@ -149,8 +145,9 @@ public class ManagementPrison {
 			System.out.print("검색 가능한 지역 - "+list.get(0).getPrisonLocation());
 			for(int i =1; i<list.size(); i++) {
 				System.out.print("/"+list.get(i).getPrisonLocation());
+			
 			}
-	
+			System.out.print("\n지역 > ");
 			return sc.nextLine();
 		}
 		
@@ -200,18 +197,19 @@ public class ManagementPrison {
 			List<Prison> list = pDAO.selectAll();
 			//리스트 0번 부터 시작하니까 예를들면 서울 정보가 들어가있음
 			System.out.print("변경 가능한 지역 - "+list.get(0).getPrisonLocation());
-			System.out.print("지역 > ");
+			
 			for(int i =1; i<list.size(); i++) {
 				System.out.print("/"+list.get(i).getPrisonLocation());
+				
 			}
-			
+			System.out.print("\n지역 > ");
 			return sc.nextLine();
 		}
 		
 		
 		private Prison inputUpdateInfo(Prison prison) {
-			System.out.println("기존 최대수용 인원> "+prison.getPrisonAccommodate());
-			System.out.print("변경 인원(원치 않을 경우 0 입력)> ");
+			System.out.println("기존 최대수용 인원 > "+prison.getPrisonAccommodate());
+			System.out.print("변경 인원(원치 않을 경우 0 입력) > ");
 			int accommodate = Integer.parseInt(sc.nextLine());
 			int occupy = pDAO.selectInfo(prison.getPrisonLocation());
 			if(accommodate != 0) {
@@ -224,8 +222,8 @@ public class ManagementPrison {
 		}
 	
 		private Prison inputUpdateName(Prison prison) {
-			System.out.println("기존 교도소 이름>"+prison.getPrisonName());
-			System.out.print("변경할 이름(원치 않을 경우 0 입력)> ");
+			System.out.println("기존 교도소 이름 > "+prison.getPrisonName());
+			System.out.print("변경할 이름(원치 않을 경우 0 입력) > ");
 			String name = sc.nextLine();
 			if(!name.equals("0")) {	
 				prison.setPrisonName(name);

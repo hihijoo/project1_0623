@@ -41,7 +41,7 @@ public class Management {
 			System.out.println();
 		}else {
 			info ="죄수번호:" + prisonNum + " 이름:" + name +" 성별:" + gender + " 생년월일:" + birth +" "+ prisonName +" 지역:"+prisonLocation 
-					+ "죄목:" + crime +" 수감일:" +imprison + " 형량:"+year+"년 " +month+"개월"+ " 석방일:" +released + " " +freedom ;
+					+ " 죄목:" + crime +" 수감일:" +imprison + " 형량:"+year+"년 " +month+"개월"+ " 석방일:" +released + " " +freedom ;
 			System.out.println();
 		}
 		
@@ -49,8 +49,8 @@ public class Management {
 	}
 	
 	public String allView (){
-	return prisonName + " 지역:"+prisonLocation+ " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth 
-			+ "죄목:" + crime  +" "+freedom;
+	return " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth 
+			+" 죄목:" + crime  +" " + prisonName + " 지역:"+prisonLocation+ " "+freedom;
 		
 	}
 	

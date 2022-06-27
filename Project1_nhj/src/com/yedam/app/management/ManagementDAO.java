@@ -181,17 +181,49 @@ public class ManagementDAO extends DAO{
 			
 			while(rs.next()) {
 				Management info = new Management();
-				
 				info.setPrisonNum(rs.getInt("prison_num"));
 				info.setName(rs.getString("name"));
 				info.setGender(rs.getString("gender"));
 				info.setBirth(rs.getDate("birth"));
 				info.setCrime(rs.getString("crime"));
 				info.setPrisonName(rs.getString("prison_name"));
-				info.setPrisonLocation(rs.getString("Prison_location"));
+				info.setPrisonLocation(rs.getString("location"));
 				info.setFreedom(rs.getString("freedom"));	
 			
-			list.add(info);
+				list.add(info);
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		
+		return list;
+	}
+	//전체 조회(distinct) - 유저
+	public List<Management> distinctUser() {
+		List<Management> list = new ArrayList<>();
+	
+		try {
+			connect();
+			String sql = "SELECT distinct prison_location FROM v_crime group by prison_location";
+					
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				Management info = new Management();
+				info.setPrisonNum(rs.getInt("prison_num"));
+				info.setName(rs.getString("name"));
+				info.setGender(rs.getString("gender"));
+				info.setBirth(rs.getDate("birth"));
+				info.setCrime(rs.getString("crime"));
+				info.setPrisonName(rs.getString("prison_name"));
+				info.setPrisonLocation(rs.getString("prison_location"));
+				info.setFreedom(rs.getString("freedom"));	
+			
+				list.add(info);
 			}
 			
 		}catch(SQLException e) {

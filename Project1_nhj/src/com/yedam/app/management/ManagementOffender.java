@@ -37,7 +37,7 @@ public class ManagementOffender {
 				insertOffender();
 			} else if (menuNo == 3) {
 				// 3.수정 - 형량
-				updateSentence(); // 형량이 안바뀐
+				updateSentence(); 
 			} else if (menuNo == 4) {
 				// 4.수정 - 지역
 				updateLocation();
@@ -105,8 +105,11 @@ public class ManagementOffender {
 		oDAO.insert(offender);
 	}
 
+	
 	protected Offender inputOffender() {
 		Offender info = new Offender();
+		try {
+		
 		System.out.print("이름>");
 		info.setName(sc.nextLine());
 		System.out.print("성별>");
@@ -123,8 +126,14 @@ public class ManagementOffender {
 		String str = sc.nextLine();
 		long sentence = calcSentence(str);
 		info.setSentence(sentence);
-
+		
+	}catch(IllegalArgumentException e) {
+		//왜 정상적으로 실행합니다가 뜰까?
+		System.out.println("괄호의 형태대로 입력해주세요.");
+	}
 		return info;
+
+	
 	}
 
 	// 형량 달로 바꾸기

@@ -76,23 +76,40 @@ public class ManagementUser {
 		//조회하고자 하는 지역을 입력
 		String location = inputLocation();
 		 
-		List<Management> list = gDAO.selectLocation(location);
+		List<Management> management = gDAO.selectLocation(location);
 		 
-		if(list.size() == 0) {
+		if(management.isEmpty()) { //이렇게 비교하는게 아닌가?
+			
 			System.out.println("해당지역에 범죄자가 없습니다.");
 			return;
 		}
 		
+		System.out.println("해당 지역에 범죄자 정보입니다.");
 		//유저가 보는 전체화면
-		for(Management allView : list) {
+		for(Management allView : management) {
 			System.out.println(allView.allView());
 		}
 		
 	}
 
 	
-	// 지역 입력
+	// 지역검색
 	private String inputLocation() {
+		try {
+		List<Management> list = gDAO.distinctUser();
+		
+		System.out.print("검색 가능한 지역 - " + list.get(0).getPrisonLocation());
+		for (int i = 1; i < list.size(); i++) {
+			System.out.print("/" + list.get(i).getPrisonLocation());
+		}
+		System.out.print("\n지역 > ");
+
+		} catch(IndexOutOfBoundsException i) {
+		}
+		return sc.nextLine();
+	}
+	
+	/*private String inputLocation() {
 		List<Management> list = gDAO.distinctLocation();
 		if(list.size()==0) {
 			System.out.println("결과없는데");
@@ -105,5 +122,6 @@ public class ManagementUser {
 		System.out.print("\n지역 > ");
 		return sc.nextLine();
 	}
+	*/
 	
 }
