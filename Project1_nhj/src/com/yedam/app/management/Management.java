@@ -38,9 +38,9 @@ public class Management {
 			info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " " + prisonName + " 지역:"
 					+ prisonLocation + " 죄목:" + crime + " 수감일:" + imprison + " 형량:" + month + "개월" + " 석방일:" + released;
 			if (released.equals(Date.valueOf(LocalDate.now()))) {
-				freedom = "출소";
+				freedom = " 출소";
 			} else {
-				freedom = "수감중";
+				freedom = " 수감중";
 			}
 			info += freedom;
 
@@ -49,9 +49,9 @@ public class Management {
 			info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " " + prisonName + " 지역:"
 					+ prisonLocation + " 죄목:" + crime + " 수감일:" + imprison + " 형량:" + year + "년" + " 석방일:" + released;
 			if (released.equals(Date.valueOf(LocalDate.now()))) {
-				freedom = "출소";
+				freedom = " 출소";
 			} else {
-				freedom = "수감중";
+				freedom = " 수감중";
 			}
 			info += freedom;
 			System.out.println();
@@ -72,13 +72,13 @@ public class Management {
 	}
 
 	public String allView() {
-		String info = " 죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " 죄목:" + crime + " "
+		String info = "\n죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " 죄목:" + crime + " "
 				+ prisonName + " 지역:" + " " +prisonLocation;
 	
 		if (released.equals(Date.valueOf(LocalDate.now()))) {
-			freedom = "출소";
+			freedom = " 출소";
 		} else {
-			freedom = "수감중";
+			freedom = " 수감중";
 		}
 		return info += freedom;
 

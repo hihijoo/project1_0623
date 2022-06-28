@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.yedam.app.common.DAO;
-import com.yedam.app.offender.Offender;
 
 public class PrisonDAO extends DAO {
 
@@ -86,7 +85,7 @@ public class PrisonDAO extends DAO {
 
 	}
 
-	// 단건 조회 - 교도소 지역
+	// 전체 조회 - 교도소 지역
 	public Prison selectLocation(String prisonLocation) {
 		Prison prison = null;
 		try {
@@ -113,7 +112,7 @@ public class PrisonDAO extends DAO {
 		return prison;
 	}
 
-	// 단건 조회 - 교도소 이름
+	// 전체 조회 - 교도소 이름
 	public Prison selectName(String prisonName) {
 		Prison prison = null;
 		try {
@@ -169,7 +168,7 @@ public class PrisonDAO extends DAO {
 		int freedom = 0;
 		try {
 			connect();
-			String sql = "SELECT COUNT(*) AS count from offenders where freedom='가석방' and location = "+"'"+location+"'";
+			String sql = "SELECT COUNT(*) AS freedom from offenders where freedom='가석방' and location = "+"'"+location+"'";
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 					

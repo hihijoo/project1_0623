@@ -42,7 +42,7 @@ public class LoginControl {
 	}
 	
 	private void menuPrint() {
-		System.out.println("====================");
+		System.out.println("\n====================");
 		System.out.println("1.회원가입 2.로그인 3.종료");
 		System.out.println("====================");
 	}
@@ -118,12 +118,12 @@ public class LoginControl {
 		loginMember.setMemberPassword(inputInfo.getMemberPassword());
 		if (inputInfo.getMemberId().equals("admin")) {
 			loginMember.setMemberRole(0);
-			System.out.println("로그인 완료\n");
+			System.out.println("\n로그인 완료");
 			new ManagementAdmin().run();
 			
 		} else {
 			loginMember.setMemberRole(1);
-			System.out.println("로그인 완료\n");
+			System.out.println("\n로그인 완료");
 			new ManagementUser().run();
 		}
 	

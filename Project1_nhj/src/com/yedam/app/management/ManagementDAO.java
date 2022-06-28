@@ -2,7 +2,6 @@ package com.yedam.app.management;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,10 +128,7 @@ public class ManagementDAO extends DAO{
 			return list;
 		}
 	
-	
-	
-	
-	// 전체조회 - 출소한사람
+	// 전체조회 - 출소한사람 (가석방 할때 출소 여부를 수정하기 위해서 필요함)
 		public List<Management> selectFreedom(String freedom,String parole){
 			List<Management> list = new ArrayList<>();
 			
@@ -172,7 +168,7 @@ public class ManagementDAO extends DAO{
 	
 	
 	
-	//전체조회 - 지역별 죄수들(유저들이 보는것)
+	//전체조회 - 지역별 죄수들(일반 유저들이 보는것)
 	public List<Management> selectLocation(String location) {
 		List<Management> list = new ArrayList<>();
 	
@@ -204,27 +200,25 @@ public class ManagementDAO extends DAO{
 		
 		return list;
 	}
-	//전체 조회(distinct) - 유저
-	public List<Management> distinctUser() {
+	
+	
+	//지역 중복없이 전체 조회 - 교도소 지역
+	public List<Management> distinctPrisonLocation() {
 		List<Management> list = new ArrayList<>();
 	
 		try {
 			connect();
-			String sql = "SELECT DISTINCT prison_location FROM v_crime group by prison_location";
+			//6월 29일에 바꿈 v-crime을 저 뷰로 혹시 오류나면 이거 보기
+			String sql = "SELECT DISTINCT prison_location FROM v_offenderInfo group by prison_location";
 					
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
 				Management info = new Management();
-//				info.setPrisonNum(rs.getInt("prison_num"));
-//				info.setName(rs.getString("name"));
-//				info.setGender(rs.getString("gender"));
-//				info.setBirth(rs.getDate("birth"));
-//				info.setCrime(rs.getString("crime"));
-//				info.setPrisonName(rs.getString("prison_name"));
+
 				info.setPrisonLocation(rs.getString("prison_location"));
-//				info.setFreedom(rs.getString("freedom"));	
+
 			
 				list.add(info);
 			}
@@ -238,6 +232,37 @@ public class ManagementDAO extends DAO{
 		return list;
 	}
 	
+
+	
+	//지역 중복 없이 조회 - 범죄자 수용된 지역
+	public List<Management> distinctOffenderLocation(){
+		List<Management> list = new ArrayList<>();
+		
+		try {
+			connect();
+			String sql ="SELECT distinct Prison_location "
+					  + "FROM v_offenderInfo";
+
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while (rs.next()){
+				Management info = new Management();
+				info.setPrisonLocation(rs.getString("Prison_location"));
+				
+				list.add(info);
+			}
+			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+
+		return list;
+	}
+
 	//전체 조회 - 지역별(관리자가 보는것)
 	public List<Management> selectPrisonLocation(String location) {
 		List<Management> list = new ArrayList<>();
@@ -273,6 +298,7 @@ public class ManagementDAO extends DAO{
 		
 		return list;
 	}
+	
 	
 	//전체 조회 
 	public List<Management> selectAll(){
@@ -311,39 +337,11 @@ public class ManagementDAO extends DAO{
 		return list;
 	}
 	
-	//전체 조회 - DISTINCT를 위해서 필요함
-	public List<Management> distinctLocation(){
-		List<Management> list = new ArrayList<>();
-		
-		try {
-			connect();
-			String sql ="SELECT distinct Prison_location "
-					  + "FROM v_offenderInfo";
-
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			
-			while (rs.next()){
-				Management info = new Management();
-				info.setPrisonLocation(rs.getString("Prison_location"));
-				
-				list.add(info);
-			}
-			
-			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			disconnect();
-		}
-
-		return list;
-	}
-
+	
 	//수정 freedom
 	public void updateFreedom(Management management) {
 		try {
-			connect();				//문장 끝날때 마다 공백 신경쓰기
+			connect();				
 			String sql = "UPDATE OFFENDERS SET freedom = ? WHERE prison_num = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "가석방");
@@ -369,7 +367,7 @@ public class ManagementDAO extends DAO{
 			pstmt.setInt(1, management.getPrisonNum());
 			Date date = Date.valueOf(LocalDate.now());
 			
-			int result = pstmt.executeUpdate();
+			pstmt.executeUpdate();
 			
 			management.setReleased(date);
 		}catch(SQLException e) {

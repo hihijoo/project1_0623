@@ -2,12 +2,9 @@ package com.yedam.app.management;
 
 import java.util.List;
 import java.util.Scanner;
-
-
 import com.yedam.app.member.MemberDAO;
-import com.yedam.app.offender.Offender;
 import com.yedam.app.offender.OffenderDAO;
-import com.yedam.app.prison.PrisonDAO;
+
 
 
 public class ManagementUser {
@@ -46,7 +43,7 @@ public class ManagementUser {
 	
 	//권한에 따른 메뉴
 	protected void menuPrint() {
-		System.out.println("==================");
+		System.out.println("/n==================");
 		System.out.println("1.범죄자 조회 9.로그아웃");
 		System.out.println("==================");
 		
@@ -71,20 +68,20 @@ public class ManagementUser {
 		System.out.println("메뉴에서 입력해주시기 바랍니다.");
 	}
 	
-	//범죄자 조회 - 지역별로 조회가능
+	//1.범죄자 조회 - 지역별로 조회가능
 	protected void searchOffender() {
-		//조회하고자 하는 지역을 입력
+		//1-1조회하고자 하는 지역을 입력
 		String location = inputLocation();
 		 
 		List<Management> management = gDAO.selectLocation(location);
 		 
-		if(management.isEmpty()) { //이렇게 비교하는게 아닌가?
+		if(management.isEmpty()) { 
 			
-			System.out.println("해당지역에 범죄자가 없습니다.");
+			System.out.println("검색 가능한 지역이 아닙니다.");
 			return;
 		}
 		
-		System.out.println("해당 지역에 범죄자 정보입니다.");
+		System.out.println("\n해당 지역에 범죄자 정보입니다.");
 		//유저가 보는 전체화면
 		for(Management allView : management) {
 			System.out.println(allView.allView());
@@ -93,10 +90,11 @@ public class ManagementUser {
 	}
 
 	
-	// 지역검색
+	// 1-1 지역검색
 	private String inputLocation() {
 		try {
-		List<Management> list = gDAO.distinctUser();
+			
+		List<Management> list = gDAO.distinctOffenderLocation();
 		
 		System.out.print("검색 가능한 지역 - " + list.get(0).getPrisonLocation());
 		for (int i = 1; i < list.size(); i++) {
@@ -108,20 +106,5 @@ public class ManagementUser {
 		}
 		return sc.nextLine();
 	}
-	
-	/*private String inputLocation() {
-		List<Management> list = gDAO.distinctLocation();
-		if(list.size()==0) {
-			System.out.println("결과없는데");
-			return "";
-		}
-		System.out.print("검색 가능한 지역 - " + list.get(0).getPrisonLocation());
-		for (int i = 1; i < list.size(); i++) {
-			System.out.print("/" + list.get(i).getPrisonLocation());
-		}
-		System.out.print("\n지역 > ");
-		return sc.nextLine();
-	}
-	*/
 	
 }

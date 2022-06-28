@@ -48,7 +48,7 @@ public class ManagementAdmin {
 		
 		//메뉴
 		protected void menuPrint() {
-			System.out.println("============================");
+			System.out.println("\n============================");
 			System.out.println("1.범죄자 관리 2.교도소 관리 9.로그아웃");
 			System.out.println("============================");
 			
