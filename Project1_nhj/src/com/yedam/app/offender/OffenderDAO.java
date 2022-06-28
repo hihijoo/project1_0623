@@ -45,7 +45,7 @@ public class OffenderDAO extends DAO {
 			int result = pstmt.executeUpdate();
 			
 			if(result !=0) {
-				System.out.println("정상적으로 등록되었습니다.");
+			
 			} else {
 				System.out.println("정상적으로 등록되지 않았습니다.");
 			}

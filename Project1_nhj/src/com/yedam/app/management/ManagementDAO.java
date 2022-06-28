@@ -1,6 +1,9 @@
 package com.yedam.app.management;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,12 +133,12 @@ public class ManagementDAO extends DAO{
 	
 	
 	// 전체조회 - 출소한사람
-		public List<Management> selectFreedom(String freedom){
+		public List<Management> selectFreedom(String freedom,String parole){
 			List<Management> list = new ArrayList<>();
 			
 			try {
 				connect();
-				String sql ="SELECT * FROM v_offenderInfo where freedom =" + "'"+freedom+"'";
+				String sql ="SELECT * FROM v_offenderInfo where freedom In(" + "'"+freedom+"','"+parole+"')";
 				stmt = conn.createStatement();
 				rs=stmt.executeQuery(sql);
 				
@@ -187,9 +190,9 @@ public class ManagementDAO extends DAO{
 				info.setBirth(rs.getDate("birth"));
 				info.setCrime(rs.getString("crime"));
 				info.setPrisonName(rs.getString("prison_name"));
-				info.setPrisonLocation(rs.getString("location"));
+				info.setPrisonLocation(rs.getString("prison_location"));
 				info.setFreedom(rs.getString("freedom"));	
-			
+				info.setReleased(rs.getDate("released"));
 				list.add(info);
 			}
 			
@@ -207,21 +210,21 @@ public class ManagementDAO extends DAO{
 	
 		try {
 			connect();
-			String sql = "SELECT distinct prison_location FROM v_crime group by prison_location";
+			String sql = "SELECT DISTINCT prison_location FROM v_crime group by prison_location";
 					
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
 				Management info = new Management();
-				info.setPrisonNum(rs.getInt("prison_num"));
-				info.setName(rs.getString("name"));
-				info.setGender(rs.getString("gender"));
-				info.setBirth(rs.getDate("birth"));
-				info.setCrime(rs.getString("crime"));
-				info.setPrisonName(rs.getString("prison_name"));
+//				info.setPrisonNum(rs.getInt("prison_num"));
+//				info.setName(rs.getString("name"));
+//				info.setGender(rs.getString("gender"));
+//				info.setBirth(rs.getDate("birth"));
+//				info.setCrime(rs.getString("crime"));
+//				info.setPrisonName(rs.getString("prison_name"));
 				info.setPrisonLocation(rs.getString("prison_location"));
-				info.setFreedom(rs.getString("freedom"));	
+//				info.setFreedom(rs.getString("freedom"));	
 			
 				list.add(info);
 			}
@@ -314,25 +317,15 @@ public class ManagementDAO extends DAO{
 		
 		try {
 			connect();
-			String sql ="SELECT prison_name, distinct Prison_location, "
-					+ "prison_num, name, gender, birth, crime, imprison,sentence,"
-					+ "released,freedom FROM v_offenderInfo";
+			String sql ="SELECT distinct Prison_location "
+					  + "FROM v_offenderInfo";
+
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
 			while (rs.next()){
 				Management info = new Management();
-				info.setPrisonName(rs.getString("prison_name"));
 				info.setPrisonLocation(rs.getString("Prison_location"));
-				info.setPrisonNum(rs.getInt("prison_num"));
-				info.setName(rs.getString("name"));
-				info.setGender(rs.getString("gender"));
-				info.setBirth(rs.getDate("birth"));
-				info.setCrime(rs.getString("crime"));
-				info.setImprison(rs.getDate("imprison"));
-				info.setSentence(rs.getLong("sentence"));
-				info.setReleased(rs.getDate("released"));
-				info.setFreedom(rs.getString("freedom"));
 				
 				list.add(info);
 			}
@@ -353,7 +346,7 @@ public class ManagementDAO extends DAO{
 			connect();				//문장 끝날때 마다 공백 신경쓰기
 			String sql = "UPDATE OFFENDERS SET freedom = ? WHERE prison_num = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, management.getFreedom());
+			pstmt.setString(1, "가석방");
 			pstmt.setInt(2, management.getPrisonNum());
 			
 			pstmt.executeUpdate();
@@ -363,6 +356,71 @@ public class ManagementDAO extends DAO{
 		}finally {
 			disconnect();
 		}
+	}
+	
+	//수정 - 가석방 출소일
+	public void updateRealesed(Management management) {
+		
+		try {
+			connect();
+			String sql  = "UPDATE OFFENDERS SET RELEASED = sysdate WHERE PRISON_NUM =? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, management.getPrisonNum());
+			Date date = Date.valueOf(LocalDate.now());
+			
+			int result = pstmt.executeUpdate();
+			
+			management.setReleased(date);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+	}
+	
+	//수정 - 가석방 형량
+	public void updateSentence(Management management) {
+		try {
+			connect();
+			String sql = "UPDATE OFFENDERS set sentence = 0 where prison_num =? ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, management.getPrisonNum());
+
+			
+			pstmt.executeUpdate();
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+	}
+	
+	//삭제
+	public void delete(Management management) {
+		try {
+			connect();
+			String sql = "DELETE FROM OFFENDERS WHERE prison_num = ? ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, management.getPrisonNum());
+			
+	
+			int result = pstmt.executeUpdate();
+			
+			if (result > 0) {
+				System.out.println("정상적으로 삭제되었습니다.");
+			} else {
+				
+			}
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+			
+		}finally {
+			disconnect();
+		}
+		
 	}
 	
 	

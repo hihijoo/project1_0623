@@ -37,7 +37,7 @@ public class ManagementPrison {
 				//4. 교도소 이름 변경
 				updatePrisonName();
 			}else if (menuNo == 5){
-				//3. 수용 가능한 인원 수정
+				//5. 수용 가능한 인원 수정
 				updateAccommodate();
 			}else if(menuNo ==9) {
 				//프로그램 종료
@@ -52,7 +52,7 @@ public class ManagementPrison {
 		
 		
 		protected void menuPrint() {
-			System.out.println("==============================================================");
+			System.out.println("\n==============================================================");
 			System.out.println("1.교도소 등록 2.전체조회 3.지역별 조회 4.교도소이름 변경 5.수용인원 변경 9.뒤로가기");
 			System.out.println("==============================================================");
 			
@@ -83,6 +83,10 @@ public class ManagementPrison {
 			//교도소 정보 입력
 			Prison info = inputPrison();
 			
+			if(info == null) {
+				return;
+			}
+			
 			//해당 지역 교도소 등록 여부
 			Prison prison = pDAO.selectLocation(info.getPrisonLocation());
 			
@@ -101,8 +105,13 @@ public class ManagementPrison {
 			info.setPrisonName(sc.nextLine());
 			System.out.print("교도소 지역>");
 			info.setPrisonLocation(sc.nextLine());
+			try {
 			System.out.print("수용가능한 인원>");
-			info.setPrisonAccommodate(Integer.parseInt(sc.nextLine()));			
+			info.setPrisonAccommodate(Integer.parseInt(sc.nextLine()));	
+			} catch(NumberFormatException e) {
+				System.out.println("숫자를 입력하세요");
+				return null;
+			}
 			return info;
 		}
 		
@@ -113,7 +122,8 @@ public class ManagementPrison {
 			for(Prison prison : list) {
 			//System.out.println(prison);
 				int people = pDAO.selectInfo(prison.getPrisonLocation());
-				prison.setPrisonOccupy(prison.getPrisonAccommodate()-people);
+				int freedomNum = pDAO.selectFreedom(prison.getPrisonLocation()); 
+				prison.setPrisonOccupy(prison.getPrisonAccommodate()-people+freedomNum);
 				pDAO.updateOccupy(prison);
 				System.out.println(prison);
 			
@@ -181,7 +191,7 @@ public class ManagementPrison {
 			Prison prison = pDAO.selectLocation(prisonLocation);
 			
 			if(prison == null) {
-				System.out.println("검색가능한 지역이 아닙니다.");
+				System.out.println("변경 가능한 지역이 아닙니다.");
 				return;
 			}
 			//수정할 정보 입력
@@ -207,25 +217,40 @@ public class ManagementPrison {
 		}
 		
 		
+
+		//수용인원 변경 여부
 		private Prison inputUpdateInfo(Prison prison) {
 			System.out.println("기존 최대수용 인원 > "+prison.getPrisonAccommodate());
 			System.out.print("변경 인원(원치 않을 경우 0 입력) > ");
+			
+			
+			try {
 			int accommodate = Integer.parseInt(sc.nextLine());
 			int occupy = pDAO.selectInfo(prison.getPrisonLocation());
+			
 			if(accommodate != 0) {
+				System.out.println("수정이 완료되었습니다.");
 				prison.setPrisonAccommodate(accommodate);
 				prison.setPrisonOccupy(accommodate-occupy);
 			} else {
 				System.out.println("수정이 되지 않았습니다.");
 			}
 			return prison;
+			
+			} catch(NumberFormatException e) {
+				System.out.println("숫자를 입력해주시기 바랍니다.");
+			}
+			return prison;
+			
 		}
 	
+		//교도소 이름 변경 여부
 		private Prison inputUpdateName(Prison prison) {
 			System.out.println("기존 교도소 이름 > "+prison.getPrisonName());
 			System.out.print("변경할 이름(원치 않을 경우 0 입력) > ");
 			String name = sc.nextLine();
 			if(!name.equals("0")) {	
+				System.out.println("수정이 완료되었습니다.");
 				prison.setPrisonName(name);
 			} else {
 			System.out.println("수정이 되지 않았습니다.");
