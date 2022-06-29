@@ -2,6 +2,7 @@ package com.yedam.app.management;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,9 +63,9 @@ public class ManagementOffender {
 	}
 
 	protected void menuPrint() {
-		System.out.println("\n============================================================================");
-		System.out.println("1.전체조회 2.등록 3.수정(형량,지역) 4.삭제 5.지역별 조회 6.수감중인 사람 7.출소한 사람 9.로그아웃");
-		System.out.println("============================================================================");
+		System.out.println("\n=====================================================================================================");
+		System.out.println("1.전체조회 2.등록 3.형량 및 지역 수정 4.가석방 및 삭제 5.지역별 조회 6.수감중인 사람 7.출소한 사람 9.메인으로");
+		System.out.println("=====================================================================================================");
 
 	}
 
@@ -126,7 +127,16 @@ public class ManagementOffender {
 			System.out.print("범죄명 > ");
 			info.setCrime(sc.nextLine());
 			System.out.print("수감일(yyyy-mm-dd) > ");
-			info.setImprison(Date.valueOf(sc.nextLine()));
+			
+			//미래 날짜 입력 금지
+			Date temp = Date.valueOf(sc.nextLine());
+			if(temp.after(java.sql.Date.valueOf(LocalDate.now()))) {
+				System.out.println("입력 날짜를 잘 확인하세요");
+				return null;
+			}else {
+				info.setImprison(temp);
+			}			
+				
 			System.out.print("형량(n년 n개월) > ");
 			String str = sc.nextLine();
 
@@ -151,7 +161,7 @@ public class ManagementOffender {
 				}
 				return info;
 			}
-
+			
 		} catch (IllegalArgumentException e) {
 			// 왜 정상적으로 실행합니다가 뜰까?
 			System.out.println("괄호의 형태대로 입력해주세요.");
@@ -502,16 +512,14 @@ public class ManagementOffender {
 		try {
 			int sentenceNum = Integer.parseInt(sc.nextLine());
 
-			if (sentenceNum != 1 || sentenceNum != 2) {
-				System.out.println("메뉴에 없는 숫자입니다.");
-				System.out.println("1 또는 2를 입력해 주세요");
-				return null;
-			} else if (sentenceNum == 2) {
+			if (sentenceNum ==1) {
+				gDAO.updateRealesed(management);
+			} else if(sentenceNum ==2) {
 				System.out.println("가석방을 취소하였습니다.");
 				return null;
-			} else if (sentenceNum == 1) {
-				// 수정해야함
-				gDAO.updateRealesed(management);
+			} else {
+				System.out.println("메뉴에 없는 숫자입니다.");
+				System.out.println("1또는 2를 입력해주세요.");
 			}
 
 		} catch (NumberFormatException e) {
@@ -581,7 +589,7 @@ public class ManagementOffender {
 	// 7. 출소한 사람 조회
 	private void selectFreedom() {
 
-		List<Management> list = gDAO.selectFreedom("출소", "가석방");
+		List<Management> list = gDAO.selectFreedom("출소","출소예정", "가석방");
 
 		if (list.size() == 0) {
 			System.out.println("출소한 사람이 없습니다.");
@@ -593,5 +601,5 @@ public class ManagementOffender {
 			System.out.println(management);
 		}
 	}
-
+	
 }

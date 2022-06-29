@@ -163,12 +163,14 @@ public class PrisonDAO extends DAO {
 	
 	// count로 where freedom = '가석방' and location = ? 가석방된 인간을 뽑아내서 where location넣어서
 	// 그것을 managementprison의 selectAll에서 수용가능인원 계산하는 것에서 + 한다
+	
 	// 수정 - 최대수용인원 조절
 	public int selectFreedom(String location) {
 		int freedom = 0;
 		try {
 			connect();
-			String sql = "SELECT COUNT(*) AS freedom from offenders where freedom='가석방' and location = "+"'"+location+"'";
+			
+			String sql = "SELECT COUNT(*) AS freedom from offenders where freedom IN ('가석방','출소','출소예정') and location = "+"'"+location+"'";
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 					
@@ -243,8 +245,8 @@ public class PrisonDAO extends DAO {
 			pstmt.setInt(1, prison.getPrisonOccupy()); // 15명 최대 수용가능인원
 			pstmt.setString(2, prison.getPrisonLocation());
 
-			/*int result = pstmt.executeUpdate();
-
+			pstmt.executeUpdate();
+/*
 			if (result > 0) {
 				System.out.println("2정상적으로 인원이 수정되었습니다.");
 

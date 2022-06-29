@@ -43,9 +43,9 @@ public class ManagementUser {
 	
 	//권한에 따른 메뉴
 	protected void menuPrint() {
-		System.out.println("/n==================");
+		System.out.println("\n==========================");
 		System.out.println("1.범죄자 조회 9.로그아웃");
-		System.out.println("==================");
+		System.out.println("==========================");
 		
 	}
 		
@@ -61,7 +61,7 @@ public class ManagementUser {
 	}
 	
 	protected void exit() {
-		System.out.println("프로그램을 종료합니다.");
+		System.out.println("\n프로그램을 종료합니다.");
 	}
 
 	protected void showInputError () {

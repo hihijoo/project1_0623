@@ -129,12 +129,12 @@ public class ManagementDAO extends DAO{
 		}
 	
 	// 전체조회 - 출소한사람 (가석방 할때 출소 여부를 수정하기 위해서 필요함)
-		public List<Management> selectFreedom(String freedom,String parole){
+		public List<Management> selectFreedom(String freedom,String expected,String parole){
 			List<Management> list = new ArrayList<>();
 			
 			try {
 				connect();
-				String sql ="SELECT * FROM v_offenderInfo where freedom In(" + "'"+freedom+"','"+parole+"')";
+				String sql ="SELECT * FROM v_offenderInfo where freedom In(" + "'"+freedom+"','"+expected+"','"+parole+"')";
 				stmt = conn.createStatement();
 				rs=stmt.executeQuery(sql);
 				
@@ -344,7 +344,7 @@ public class ManagementDAO extends DAO{
 			connect();				
 			String sql = "UPDATE OFFENDERS SET freedom = ? WHERE prison_num = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, "가석방");
+			pstmt.setString(1, management.getFreedom());
 			pstmt.setInt(2, management.getPrisonNum());
 			
 			pstmt.executeUpdate();

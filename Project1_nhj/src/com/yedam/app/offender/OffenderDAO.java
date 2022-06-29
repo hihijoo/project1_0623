@@ -1,14 +1,9 @@
 package com.yedam.app.offender;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.StringTokenizer;
-
 import com.yedam.app.common.DAO;
 import com.yedam.app.management.Management;
-import com.yedam.app.prison.Prison;
+
 
 
 public class OffenderDAO extends DAO {

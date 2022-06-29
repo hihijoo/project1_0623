@@ -1,7 +1,7 @@
 package com.yedam.app.member;
 
 import java.sql.SQLException;
-import java.util.Scanner;
+
 
 import com.yedam.app.common.DAO;
 
@@ -71,7 +71,7 @@ public class MemberDAO extends DAO {
 			
 		}
 	
-	//로그인
+	// 2.로그인
 	public Member selectOne(Member member) {
 		Member loginInfo = null;
 		try {
@@ -109,33 +109,6 @@ public class MemberDAO extends DAO {
 	}
 	
 	
-	//MEMBERROLE 조회하기
-//	public Member selectRoll(int memberRole) {
-//		Member role = null;
-//		try{ 
-//			connect();
-//			String sql = "select * from members where member_role = ?";
-//			pstmt = conn.prepareStatement(sql);
-//			pstmt.setInt(1, memberRole);
-//			
-//			rs = pstmt.executeQuery();
-//			
-//			if(rs.next()) {
-//				role = new Member();
-//				role.setMemberId(rs.getString("member_id"));
-//				role.setMemberPassword(rs.getString("member_password"));
-//				role.setMemberName(rs.getString("member_name"));
-//				role.setMemberRole(rs.getInt("member_role"));	
-//			}
-//			
-//		} catch(SQLException e) {
-//			e.printStackTrace();
-//		} finally {
-//			
-//		disconnect();
-//	}
-//	 return role;
-//	}
-//	
+		
 	
 }

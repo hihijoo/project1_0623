@@ -5,6 +5,8 @@ import java.util.StringTokenizer;
 
 public class Release {
 	
+	//기환이가 만들어준 것 - 해석해보기
+	
 	public static void main(String[] args) {
 		
 		System.out.printf("?년 ?개월\n");

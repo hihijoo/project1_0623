@@ -37,9 +37,13 @@ public class Management {
 			// 0개월일 경우
 			info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " " + prisonName + " 지역:"
 					+ prisonLocation + " 죄목:" + crime + " 수감일:" + imprison + " 형량:" + month + "개월" + " 석방일:" + released;
-			if (released.equals(Date.valueOf(LocalDate.now()))) {
+			if (released.before(Date.valueOf(LocalDate.now()))) {
 				freedom = " 출소";
-			} else {
+			} else if(sentence ==0) {
+				freedom = " 가석방";
+			}else if (released.equals(Date.valueOf(LocalDate.now()))){
+				freedom = " 출소예정";
+			}else {
 				freedom = " 수감중";
 			}
 			info += freedom;
@@ -48,9 +52,13 @@ public class Management {
 		} else if (month == 0) {
 			info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " " + prisonName + " 지역:"
 					+ prisonLocation + " 죄목:" + crime + " 수감일:" + imprison + " 형량:" + year + "년" + " 석방일:" + released;
-			if (released.equals(Date.valueOf(LocalDate.now()))) {
+			if (released.before(Date.valueOf(LocalDate.now()))) {
 				freedom = " 출소";
-			} else {
+			}else if(sentence ==0) {
+				freedom = " 가석방";
+			}else if (released.equals(Date.valueOf(LocalDate.now()))){
+				freedom = " 출소예정";
+			}else {
 				freedom = " 수감중";
 			}
 			info += freedom;
@@ -59,9 +67,13 @@ public class Management {
 			info = "죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " " + prisonName + " 지역:"
 					+ prisonLocation + " 죄목:" + crime + " 수감일:" + imprison + " 형량:" + year + "년 " + month + "개월"
 					+ " 석방일:" + released;
-			if (released.equals(Date.valueOf(LocalDate.now()))) {
+			if (released.before(Date.valueOf(LocalDate.now()))) {
 				freedom = " 출소";
-			} else {
+			}else if(sentence ==0) {
+				freedom = " 가석방";
+			}else if (released.equals(Date.valueOf(LocalDate.now()))){
+				freedom = " 출소예정";
+			}else {
 				freedom = " 수감중";
 			}
 			info += freedom;
@@ -75,9 +87,11 @@ public class Management {
 		String info = "\n죄수번호:" + prisonNum + " 이름:" + name + " 성별:" + gender + " 생년월일:" + birth + " 죄목:" + crime + " "
 				+ prisonName + " 지역:" + " " +prisonLocation;
 	
-		if (released.equals(Date.valueOf(LocalDate.now()))) {
+		if (released.before(Date.valueOf(LocalDate.now()))) {
 			freedom = " 출소";
-		} else {
+		} else if (released.equals(Date.valueOf(LocalDate.now()))){
+			freedom = " 출소예정";
+		}else {
 			freedom = " 수감중";
 		}
 		return info += freedom;

@@ -13,10 +13,10 @@ import java.util.Properties;
 public class DAO {
 	
 	//ORACLE DB 정보
-		private String jdbcDriver;
-		private String oracleUrl;
-		private String connectedId;
-		private String connectedPwd;
+		private String jdbcDriver="oracle.jdbc.driver.OracleDriver";
+		private String oracleUrl="jdbc:oracle:thin:@localhost:1521:xe";
+		private String connectedId ="crime";
+		private String connectedPwd="crime";
 		
 		//공통으로 사용되는 필드 - 
 		protected Connection conn;
@@ -27,7 +27,7 @@ public class DAO {
 		
 		//한번만 dbconfig를 실행시키고자 한다면 빼내야함
 		public DAO() {
-			dbConfig();
+			//dbConfig();
 		}
 		
 		//db에 접속하는 메소드
@@ -46,7 +46,7 @@ public class DAO {
 		}
 		
 		//db 정보를 가져오는 메소드
-
+/*
 		private void dbConfig() { // 파일에 저장된것을 가져옴, 파일값만 바꾸면 되니까 편리함
 			String resource = "config/db.properties";
 			Properties properties = new Properties();
@@ -65,7 +65,7 @@ public class DAO {
 			connectedPwd = properties.getProperty("password");
 		}
 
-		
+		*/
 		//db 접속을 해제하는 메소드
 		public void disconnect() {
 			try {
